@@ -4,6 +4,7 @@ Private Repository for all the projects bound to the CS571-Programming Language(
 
 ### Project Directory:
 
+```
 .gitignore
 README.md
 submit
@@ -12,3 +13,4 @@ submit
    |   |-- README
    |   |-- decls.sh
    |   |-- make.sh
+```
