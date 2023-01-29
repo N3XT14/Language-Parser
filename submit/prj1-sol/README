@@ -1,6 +1,18 @@
-Name:		XXX
-B-Number:	XXX
-Email:		XXX
+Name:		Yash Oswal
+B-Number:	B00981171
+Email:		yoswal@binghamton.edu
 
-Add text here as needed.
+### Project Directory:
+
+```
+.gitignore
+README.md
+submit
+   |-- prj1-sol
+   |   |-- .gitignore
+   |   |-- README
+   |   |-- decls.sh
+   |   |-- make.sh
+```
+
 
