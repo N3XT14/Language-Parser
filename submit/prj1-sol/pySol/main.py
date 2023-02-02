@@ -144,24 +144,19 @@ def performLexical(l):
         return lexStack
 
     except KeyError as e:
-        print(e)
+        sys.exit(1)
     except AttributeError as e:
-        print(e)
+        sys.exit(1)
     except ValueError as e:
-        print(e)
+        sys.exit(1)
     except SyntaxError as e:
-        print(e)
+        sys.exit(1)
     except TypeError as e:
-        print(e)
+        sys.exit(1)
 
 inpBucket = getInputFromStdin()
 tokenList = createTokens(inpBucket)
 lexStack = performLexical(tokenList)
-# print(lexStack)
 result = generateJsonArrayOP(lexStack)
-# print("Result ====>", result, "\n", type(result))
-# print("Result ====>", json.loads(result))
+
 print(result)
-print(stateDP)
-# print(json.loads(result))
-#print(inpBucket)
