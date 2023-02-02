@@ -7,6 +7,7 @@ reservedWords = ["var", "number", "string", "record"]
 reservedTypeWordList = ["number", "string", "record"]
 
 def isValidIdentifier(id):
+    if id.endswith(':'): id = id[:-1]
     return id.isidentifier() and id not in reservedWords
 
 def isValidType(id):
@@ -47,7 +48,7 @@ def createTokens(*args):
 
     if len(tokens) == 0:
         return []
-    print(tokens)
+    # print(tokens)
     return tokens
 
 def performLexical(l):
@@ -57,90 +58,109 @@ def performLexical(l):
     isTypeFound = False
     isSemiColonFound = False
     recCnt, endCnt = 0,0
+    tmp = []
     try :
         # raise ValueError('A very specific bad thing happened')
         for i in l:
             if len(i) == 0: continue
-            tmp = i.split()
-            if len(tmp) == 0: continue
+            stmp = i.split()
+            if len(stmp) == 0: continue
+            # if stmp.startswith('#'): continue
+            for ele in stmp:
+                if ele.startswith('#'):
+                    break
+                else:
+                    tmp.extend([ele])
             
-            i = 0
-            while i < len(tmp):
-                if tmp[i].startswith('#'): break
-                val = tmp[i]
-                
-                #Special Case
-                if recCnt != endCnt and val == "end;":
-                    # print(isIDFound, isColonFound)
-                    print("End Check", val)
-                    endCnt += 1
-                    lexStack.append(']]')
-                    i += 1
+        i = 0
+        while i < len(tmp):
+            if tmp[i].startswith('#'): break
+            val = tmp[i]
+            
+            #Special Case
+            if recCnt != endCnt and val == "end;":
+                # print(isIDFound, isColonFound)
+                # print("End Check", val)
+                endCnt += 1
+                lexStack.append(']]')
+                i += 1
 
-                elif not isVarFound:
-                    print("Var check", val)
-                    if val != "var": raise KeyError("Syntax Error Found expected var")
-                    isVarFound = True
-                    i += 1
-                elif isVarFound and not isIDFound:
-                    print("Identifier Check ===> ", val)
-                    if val.startswith(':'): raise ValueError("Identifier Missing")
-                    if val.endswith(':'): 
-                        val = val[:-1]
-                        isColonFound = True
-                    if not isValidIdentifier(val): raise AttributeError("Identifier used is incorrect. It cannot be from a reserverd word")
-                    lexStack.append('[')
-                    lexStack.append(val)
-                    isIDFound = True
-                    i += 1
-                elif isVarFound and isIDFound and not isColonFound:
-                    print("Colon Check ===> ", val)
-                    if not val.startswith(':'): raise SyntaxError("Colon Needed")
-                    if val == ":":
-                        i += 1
+            elif not isVarFound:
+                # print("Var check", val)
+                if val != "var": raise KeyError("Syntax Error Found expected var")
+                isVarFound = True
+                i += 1
+            elif isVarFound and not isIDFound:
+                # print("Identifier Check ===> ", val)
+                if val.startswith(':'): raise ValueError("Identifier Missing")
+                if val.endswith(':'): 
+                    val = val[:-1]
                     isColonFound = True
-                elif isVarFound and isIDFound and isColonFound and not isTypeFound:
-                    print("Type Check ===> ", val)
-                    if val.startswith(':'):
-                        val = val[1:]
-                    if val.endswith(';'):
-                        val = val[:-1]
-                        isSemiColonFound = True
-                    if not isValidType(val): raise TypeError("Invalid value of the Type field")
-                    
-                    if val == 'record':
-                        #Recursion
-                        # recurRecord()
-                        isRecordFound = True
-                        stateDP.append([-1,-1,-1,-1,-1])
-                        recCnt += 1
-                        lexStack.append('[')
+                if not isValidIdentifier(val): raise AttributeError("Identifier used is incorrect. It cannot be from a reserverd word")
+                lexStack.append('[')
+                lexStack.append(val)
+                isIDFound = True
+                i += 1
+            elif isVarFound and isIDFound and not isColonFound:
+                # print("Colon Check ===> ", val)
+                if not val.startswith(':'): raise SyntaxError("Colon Needed")
+                if val == ":":
+                    i += 1
+                isColonFound = True
+            elif isVarFound and isIDFound and isColonFound and not isTypeFound:
+                # print("Type Check ===> ", val)
+                if val.startswith(':'):
+                    val = val[1:]
+                if val.endswith(';'):
+                    val = val[:-1]
+                    isSemiColonFound = True
+                if not isValidType(val): raise TypeError("Invalid value of the Type field")
+                
+                if not isSemiColonFound:
+                    if i >= len(tmp) - 1: 
+                        raise SyntaxError("Semicolon Missing")
+                    if not tmp[i+1].startswith(';') and val != 'record':
+                        raise SyntaxError("Semicolon Missing")
+                
+                #Perform Lookahead
+                if val == 'record':
+                    #Recursion
+                    # recurRecord()
+                    if not isValidIdentifier(tmp[i+1]):
+                        print(tmp[i+1])
+                        raise SyntaxError('Identifier expected after record')
+                    isRecordFound = True
+                    stateDP.append([-1,-1,-1,-1,-1])
+                    recCnt += 1
+                    lexStack.append('[')
 
-                    if recCnt != endCnt:
-                        if val != 'record':
-                            lexStack.append(val)
-                            lexStack.append(']')
-                        isTypeFound = False
-                        isIDFound = False
-                        isColonFound = False
-                        isSemiColonFound = False
-                    else:
+                if recCnt != endCnt:
+                    if val != 'record':
                         lexStack.append(val)
                         lexStack.append(']')
-                        isTypeFound = True
-                    i += 1
-                elif isVarFound and isIDFound and isColonFound and isTypeFound and not isSemiColonFound:
-                    print("Semi Colon Check ===> ", val)
-                    if val == ";":
-                        isSemiColonFound = True
-                    i += 1
-
-                if isVarFound and isIDFound and isColonFound and isTypeFound and isSemiColonFound:
-                    isVarFound = False
+                    isTypeFound = False
                     isIDFound = False
                     isColonFound = False
-                    isTypeFound = False
                     isSemiColonFound = False
+                else:
+                    lexStack.append(val)
+                    lexStack.append(']')
+                    isTypeFound = True
+                i += 1
+            elif isVarFound and isIDFound and isColonFound and isTypeFound and not isSemiColonFound:
+                # print("Semi Colon Check ===> ", val)
+                if val == ";":
+                    isSemiColonFound = True
+                else:
+                    raise SyntaxError("Semicolon Missing")
+                i += 1
+
+            if isVarFound and isIDFound and isColonFound and isTypeFound and isSemiColonFound:
+                isVarFound = False
+                isIDFound = False
+                isColonFound = False
+                isTypeFound = False
+                isSemiColonFound = False
         return lexStack
 
     except KeyError as e:
@@ -150,6 +170,7 @@ def performLexical(l):
     except ValueError as e:
         sys.exit(1)
     except SyntaxError as e:
+        print(e)
         sys.exit(1)
     except TypeError as e:
         sys.exit(1)
