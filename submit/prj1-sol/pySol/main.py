@@ -35,7 +35,7 @@ def getInputFromStdin():
 def createTokens(*args):
     tokens = []
     
-    #Removing whitespaces from the tokens
+    #Removing whitespaces, comments from the tokens
     for id,tok in enumerate(args[0]):
         tok = tok.strip() #Remove whitespace
 
@@ -145,7 +145,6 @@ def performLexical(l):
                     isTypeFound = True
                 i += 1
             elif isVarFound and isIDFound and isColonFound and isTypeFound and not isSemiColonFound:
-                # print("Semi Colon Check ===> ", val)
                 if val == ";":
                     isSemiColonFound = True
                 else:
