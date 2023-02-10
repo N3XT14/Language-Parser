@@ -2,7 +2,6 @@ import sys, re, json
 
 result = []
 lexStack = []
-stateDP = []
 reservedWords = ["var", "number", "string", "record"]
 reservedTypeWordList = ["number", "string", "record"]
 
@@ -48,7 +47,7 @@ def createTokens(*args):
 
     if len(tokens) == 0:
         return []
-    # print(tokens)
+
     return tokens
 
 def performLexical(l):
@@ -60,12 +59,13 @@ def performLexical(l):
     recCnt, endCnt = 0,0
     tmp = []
     try :
-        # raise ValueError('A very specific bad thing happened')
+
         for i in l:
             if len(i) == 0: continue
             stmp = i.split()
+            
             if len(stmp) == 0: continue
-            # if stmp.startswith('#'): continue
+
             for ele in stmp:
                 if ele.startswith('#'):
                     break
@@ -79,19 +79,22 @@ def performLexical(l):
             
             #Special Case
             if recCnt != endCnt and val == "end;":
-                # print(isIDFound, isColonFound)
-                # print("End Check", val)
                 endCnt += 1
                 lexStack.append(']]')
                 i += 1
-
+            elif recCnt != endCnt and val == "end":
+                if i >= len(tmp) - 1 or tmp[i+1] != ';':
+                    raise SyntaxError("Semicolon Missing")
+                endCnt += 1
+                lexStack.append(']]')
+                i += 1
             elif not isVarFound:
-                # print("Var check", val)
                 if val != "var": raise KeyError("Syntax Error Found expected var")
+                if i >= len(tmp) - 1:
+                    raise ValueError("Identifier Missing")
                 isVarFound = True
                 i += 1
             elif isVarFound and not isIDFound:
-                # print("Identifier Check ===> ", val)
                 if val.startswith(':'): raise ValueError("Identifier Missing")
                 if val.endswith(':'): 
                     val = val[:-1]
@@ -102,13 +105,11 @@ def performLexical(l):
                 isIDFound = True
                 i += 1
             elif isVarFound and isIDFound and not isColonFound:
-                # print("Colon Check ===> ", val)
                 if not val.startswith(':'): raise SyntaxError("Colon Needed")
                 if val == ":":
                     i += 1
                 isColonFound = True
             elif isVarFound and isIDFound and isColonFound and not isTypeFound:
-                # print("Type Check ===> ", val)
                 if val.startswith(':'):
                     val = val[1:]
                 if val.endswith(';'):
@@ -124,13 +125,9 @@ def performLexical(l):
                 
                 #Perform Lookahead
                 if val == 'record':
-                    #Recursion
-                    # recurRecord()
                     if not isValidIdentifier(tmp[i+1]):
                         print(tmp[i+1])
                         raise SyntaxError('Identifier expected after record')
-                    isRecordFound = True
-                    stateDP.append([-1,-1,-1,-1,-1])
                     recCnt += 1
                     lexStack.append('[')
 
@@ -164,15 +161,19 @@ def performLexical(l):
         return lexStack
 
     except KeyError as e:
+        print(e)
         sys.exit(1)
     except AttributeError as e:
+        print(e)
         sys.exit(1)
     except ValueError as e:
+        print(e)
         sys.exit(1)
     except SyntaxError as e:
         print(e)
         sys.exit(1)
     except TypeError as e:
+        print(e)
         sys.exit(1)
 
 inpBucket = getInputFromStdin()
@@ -181,3 +182,4 @@ lexStack = performLexical(tokenList)
 result = generateJsonArrayOP(lexStack)
 
 print(result)
+
