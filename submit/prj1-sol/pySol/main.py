@@ -1,7 +1,16 @@
+"""
+Implementation Details of a simple recognizer(simple recursive parser) for a given language.
+
+=====================================================================
+File Name: main.py
+Description: Implementation of Simple Recognizer for a given language.
+Developer: Yash Oswal
+Start Date: Feb 01, 2023
+"""
 import sys, re, json
 
 #Global Language Reserved Words.
-reservedWords = ["var", "number", "string", "record"]
+reservedWords = ["var", "number", "string", "record", "end"]
 reservedTypeWordList = ["number", "string", "record"]
 
 
@@ -218,3 +227,4 @@ lexStack = performLexical(tokenList) #Perform Lexical Analysis
 result = generateJsonArrayOP(lexStack) #If valid output then generate JSON Output structure.
 
 print(result) #Print to standard output.
+
