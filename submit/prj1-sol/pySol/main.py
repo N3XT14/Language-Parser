@@ -102,16 +102,15 @@ def performLexical(l):
             val = tmp[i]
             
             #Special Case
-            if recCnt != endCnt and val == "end;":
+            if recCnt != endCnt and val.startswith("end"):
+                if val == "end;":
+                    i += 1
+                elif val == "end":
+                    if i >= len(tmp) - 1 or tmp[i+1] != ';':
+                        raise SyntaxError("Semicolon Missing")
+                    i += 2
                 endCnt += 1
                 lexStack.append(']]')
-                i += 1
-            elif recCnt != endCnt and val == "end":
-                if i >= len(tmp) - 1 or tmp[i+1] != ';':
-                    raise SyntaxError("Semicolon Missing")
-                endCnt += 1
-                lexStack.append(']]')
-                i += 1
             elif not isVarFound:
 
                 #If "var" not encountered then check for "var".
@@ -198,7 +197,8 @@ def performLexical(l):
 
             #Reset Flags to Re Run.
             if isVarFound and isIDFound and isColonFound and isTypeFound and isSemiColonFound:
-                isVarFound = False
+                if recCnt == endCnt:
+                    isVarFound = False
                 isIDFound = False
                 isColonFound = False
                 isTypeFound = False
