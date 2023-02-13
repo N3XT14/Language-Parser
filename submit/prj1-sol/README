@@ -13,6 +13,18 @@ submit
    |   |-- README
    |   |-- decls.sh
    |   |-- make.sh
+   |   |-- pySol
+   |   |   |-- main.py
+   |   |-- runTests.sh
 ```
 
+### Running Script:
 
+Run the below script for executing the testcases.
+
+./runTests.sh
+
+
+### Current Status:
+
+Passes all the testcases provided in the tests* folder.
