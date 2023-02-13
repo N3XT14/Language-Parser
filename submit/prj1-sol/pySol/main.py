@@ -1,6 +1,29 @@
 """
 Implementation Details of a simple recognizer(simple recursive parser) for a given language.
 
+Extended Backus–Naur form (EBNF):
+
+program:
+    : (declaration)*
+    ;
+declaration
+    : 'var' identifier ':' type
+    ;
+identifier
+    :  alpha (alpha | digit | '_')*
+    ;
+type
+    : 'number'
+    | 'string'
+    | 'record'
+    ;
+record
+    : ( field_declaration end )+
+    ;
+field_declaration
+    : 'identifier' ':' type ';'
+    ;
+    
 =====================================================================
 File Name: main.py
 Description: Implementation of Simple Recognizer for a given language.
@@ -227,4 +250,5 @@ lexStack = performLexical(tokenList) #Perform Lexical Analysis
 result = generateJsonArrayOP(lexStack) #If valid output then generate JSON Output structure.
 
 print(result) #Print to standard output.
+
 
