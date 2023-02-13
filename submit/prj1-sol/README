@@ -1,6 +1,6 @@
 * Name:		Yash Oswal
 * B-Number:	B00981171
-* Email:		yoswal@binghamton.edu
+* Email:	yoswal@binghamton.edu
 
 ### Project Directory:
 
@@ -36,4 +36,4 @@ Algorithm works on two concepts i.e peek, consume. (though these words are not u
 Peek: We peek at the current token and sibling tokens for the desired declaration.
 Consume: If desired declaration are found then it is consumed inside the stack.
 
-In case a peek is failed which may be due to couple of reasons like incalid value, end of tokens, improper declaration sequence, then in that case a suitable error messgae is thrown towards the standard output.
+In case a peek is failed which may be due to couple of reasons like invalid value, end of tokens, improper declaration of sequence, then in that case a suitable error messgae is thrown towards the standard output.
