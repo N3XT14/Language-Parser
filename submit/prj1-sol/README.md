@@ -1,6 +1,6 @@
-Name:		Yash Oswal
-B-Number:	B00981171
-Email:		yoswal@binghamton.edu
+* Name:		Yash Oswal
+* B-Number:	B00981171
+* Email:		yoswal@binghamton.edu
 
 ### Project Directory:
 
